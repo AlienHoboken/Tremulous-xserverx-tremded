@@ -1,0 +1,62 @@
+MercenariesGuild Tremded for Tremulous 1.1
+Release version: 1.0
+For Tremulous upstream revision: 1117
+
+----------------------
+Introduction:
+
+The MercenariesGuild Tremded for Tremulous 1.1 is a joint effort between several members of }MG{ under the leadership of benmachine and Lakitu7. Primarily, it exists because we were not pleased with the current Tremded binary releases offered by others and have been using our own for some time on the Puretremulous servers. We have also developed and herein include several new patches that we feel will benefit the community. As with the other releases by members of our group, this project will also follow our usual standards of including our own numerous advancements, as well as those community patches that are good and reasonable, while omitting the rest.
+
+----------------------
+Features:
+
+ * Built from the very latest Tremulous SVN, "backported" for compatibility with Tremulous 1.1 servers
+ * Legacy support for TJW's client's wwwdownload cvars
+ * sv_rconLog to output rcon usage and attempts to a file (DavidSev)
+ * Semipure, letting servers allow clients to use mutiple cgame/ui qvms within the sv_pure 1 environment (Lakitu7)
+ * VOIP support (this is from Tremulous SVN, not our work)
+ * Works with any game.qvm designed for "tjw tremdeds" (basically all of them but the stock 1.1 game.qvm, at this point)
+
+----------------------
+Documentation for individual patches:
+
+***
+sv_rconLog
+Author: DavidSev
+***
+Enable it by setting sv_rconLog to a filename (such as rcon.log). The file will appear in the server's fs_home/fs_game directory and log all rcon usage and attempts in the following format (example): 
+09/08/08 17:29:49  Rcon from 76.114.18.200: echo test
+09/08/08 17:48:59  Bad rcon from 76.114.18.150: shutdown
+09/08/08 17:49:02  Bad rcon from 76.114.18.100: !help 
+As part of this patch, rcon usage messages to the server console will also include the arguments used/attempted.
+
+**
+Legacy support for TJW's client's wwwdownload cvars
+**
+Simply set the added sv_wwwDownload and sv_wwwBaseURL cvars to provide legacy compatibility for curl downloads to this very popular range of clients. 
+
+***
+Semipure
+Author: Lakitu7
+***
+  * Enable by setting sv_semipurePrefix to a string that is contained in the files you wish to be allow to be used with semipure. My suggestion is "aaa_" because this is the standard I've established and because clients will not load early-alpha-ordered filenames instead of the default vms unless a (semi)pure server tells them to do so. Using other names risks clients complaining that their custom HUDs etc. have disappeared even after restarting their client.
+  * Disable by setting sv_semipurePrefix ""
+  * Once enabled, name your semipure pk3s appropriately (so that they contain the string in sv_semipurePrefix) and place them in your fs_basepath of the server. Clients who choose to use the semipure pk3s should also put them in their fs_basepath. Note that this is BASEPATH, not HOMEPATH, on both ends. If a server incorrectly places a pk3 file in homepath, its clients will be forced to have it, regardless of the semipure settings. If a client incorrectly places a pk3 file in homepath, it will override the vms in basepath regardless of my neat filename-load-order tricks. Client auto-downloads will always place things in homepath. This is why the following cvar defaults to off and should remain off unless fs_game != base (you are running a mod)
+  * sv_semipureOfferDownloads: default 0. If set to 1, the server will offer the semipure pk3s to the clients as downloads. Clients with cl_allowdownload 1 will be forced to either get them or disconnect. Clients with cl_allowdownload 0 (or clients that predate cl_allowdownload) will play as normal without the semipure pk3s. Because of the above-described path issues, this cvar should ONLY be enabled if fs_game != base (you are running a mod). DO NOT ENABLE THIS FOR SERVERS WHERE FS_GAME = BASE OR YOU WILL BREAK EVERYONE'S CLIENTS (actually, they probably won't notice a difference unless they are running a HUD with custom menus outside the game, in which case those will revert to the default menus or whatever is included in your pk3s). Also note that by enabling this either way, people with cl_allowdownload 1 cannot connect without downloading the file (or changing cl_allowdownload to 0). This is a client-side limitation since the client assumes it must have what is offered to it, a totally valid assumption before semipure came along. :)
+
+  * Synopsis instructions: 
+  1) Name semipure pk3s something like: "aaa_whatever.pk3"
+  2) Place them in the server's BASEPATH
+  3) Make extra sure that you placed them in the server's BASEPATH, and NOT its HOMEPATH (check the cvars fs_basepath and fs_homepath if you're not sure where those are)
+  4) Put them on your webserver someplace and tell any users where they can manually download them. Tell those users to also put them in their basepath, NOT their homepath. 
+  5) Set sv_semipurePrefix "aaa_" on the server (you will have to restart the server for this to take effect)
+  6) Unless you are running a mod with fs_game is something different from base or blank (which is the same as base), DO NOT ENABLE sv_semipureOfferDownloads. Even if you are, you probably still shouldn't. 
+<3 Lak. 
+
+----------------------
+Support:
+To contact the authors of this project regarding problems specific to it, please visit #mercenariesguild on irc.freenode.net. Alternately, you can use the appropriate current topic on the Mods section of the forums at Tremulous.net. If you are new to creating Tremulous servers and your problem is likely not specific to our release, you may still ask us for help, but may also want to consider asking in the more general venues: #tremulous, also on freenode, or the Troubleshooting section on the forums at Tremulous.net
+
+----------------------
+Credits: 
+This release includes patches by benmachine, Lakitu7, and DavidSev. It is released under GPL, as is the main Tremulous project upon which it is based. 
