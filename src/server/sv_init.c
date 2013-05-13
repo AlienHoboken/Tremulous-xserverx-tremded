@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "server.h"
 
-
 /*
 ===============
 SV_SendConfigstring
@@ -647,6 +646,8 @@ void SV_Init (void) {
 	sv_semipureOfferDownloads = Cvar_Get ("sv_semipureOfferDownloads", "0", CVAR_ARCHIVE );
         //Init mysql with tremded.
         sv_mysql_init();
+        //attempt to connect to webconsole
+        sv_webconsoleConnected = sv_webconsole_connect(&sv_webconsoleSocket);
 }
 
 
@@ -696,6 +697,9 @@ void SV_Shutdown( char *finalmsg ) {
 	}
 
 	Com_Printf( "----- Server Shutdown (%s) -----\n", finalmsg );
+
+	//webconsole shutdown
+	sv_webconsole_close(&sv_webconsoleSocket);
 
 	NET_LeaveMulticast6();
 

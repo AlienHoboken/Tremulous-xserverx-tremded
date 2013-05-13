@@ -302,6 +302,7 @@ ifeq ($(PLATFORM),linux)
   SHLIBLDFLAGS=-shared $(LDFLAGS)
 
   THREAD_LDFLAGS=-lpthread
+#  LDFLAGS=-ldl -lm
   LDFLAGS=-ldl -lm  $(shell mysql_config --libs) #mysql added
 
   CLIENT_LDFLAGS=$(shell sdl-config --libs) -lGL
@@ -1399,6 +1400,7 @@ Q3DOBJ = \
   $(B)/ded/sv_snapshot.o \
   $(B)/ded/sv_world.o \
   $(B)/ded/sv_mysql.o \
+  $(B)/ded/sv_webconsole.o \
   $(B)/ded/globalv2loader.o \
   \
   $(B)/ded/cm_load.o \

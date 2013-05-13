@@ -193,6 +193,8 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
   // hack to echo broadcast prints to console
   if ( com_dedicated->integer && !strncmp( (char *)message, "print", 5) ) {
     Com_Printf ("broadcast: %s\n", SV_ExpandNewlines((char *)message) );
+    //webconsole todo - also hack in admp's to client
+    // send to client by guid
   }
 
   // send the data to all relevent clients
@@ -763,6 +765,7 @@ void SV_ConnectionlessPacket( netadr_t from, msg_t *msg ) {
   c = Cmd_Argv(0);
   Com_DPrintf ("SV packet %s : %s\n", NET_AdrToString(from), c);
 
+
   if (!Q_stricmp(c, "getstatus")) {
     SVC_Status( from );
   } else if (!Q_stricmp(c, "getinfo")) {
@@ -770,7 +773,10 @@ void SV_ConnectionlessPacket( netadr_t from, msg_t *msg ) {
   } else if (!Q_stricmp(c, "getchallenge")) {
     SV_GetChallenge( from );
   } else if (!Q_stricmp(c, "connect")) {
-    SV_DirectConnect( from );
+   SV_DirectConnect( from );
+  } else if (!Q_stricmp(c, "connectw")) {
+   Com_DPrintf("Call to connectw!\n");
+   SV_DirectConnect( from );
   } else if (!Q_stricmp(c, "rcon")) {
     SVC_RemoteCommand( from, msg );
   } else if (!Q_stricmp(c, "disconnect")) {
@@ -1101,6 +1107,9 @@ void SV_Frame( int msec ) {
 
   // send a heartbeat to the master if needed
   SV_MasterHeartbeat();
+
+  // webconsole - fetch message from socket
+  sv_webconsole_read( &sv_webconsoleSocket, &sv_webconsoleConnected);
 }
 
 //============================================================================

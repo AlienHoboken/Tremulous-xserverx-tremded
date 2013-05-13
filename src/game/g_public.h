@@ -232,6 +232,8 @@ typedef enum {
   G_XGLOBAL_LOAD_C,
   G_XGLOBAL_FLAGS,
 
+  //webconsole
+  G_WEBCONSOLE_SEND
 } gameImport_t;
 
 

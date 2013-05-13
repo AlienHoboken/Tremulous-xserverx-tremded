@@ -514,7 +514,10 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 		return xglobal_load_c(VMA(1));
 	case G_XGLOBAL_FLAGS:
 		return xglobal_flags(VMA(1));
-
+	//webconsole
+	case G_WEBCONSOLE_SEND:
+		sv_webconsole_send(&sv_webconsoleSocket, VMA(1), &sv_webconsoleConnected);
+		return 0;
 	default:
 		Com_Error( ERR_DROP, "Bad game system trap: %ld", (long int) args[0] );
 	}

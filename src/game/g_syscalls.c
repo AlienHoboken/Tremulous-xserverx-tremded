@@ -320,3 +320,8 @@ void trap_xglobal_free(void)
 {
 	syscall(G_XGLOBAL_FREE);
 }
+
+//webconsole
+void trap_webconsole_send( char *message ) {
+      syscall( G_WEBCONSOLE_SEND, message );
+}

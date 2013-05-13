@@ -271,13 +271,18 @@ extern	cvar_t	*sv_lanForceRate;
 extern	cvar_t	*sv_dequeuePeriod;
 extern  cvar_t  *sv_semipurePrefix;
 extern  cvar_t  *sv_semipureOfferDownloads;
+// mysql
 extern  cvar_t  *sv_mysql;
 extern  cvar_t  *sv_mysqlhost;
 extern  cvar_t  *sv_mysqldatabase;
 extern  cvar_t  *sv_mysqlusername;
 extern  cvar_t  *sv_mysqlpassword;
-
-
+// webconsole
+extern  cvar_t  *sv_webconsoleHost;
+extern  cvar_t  *sv_webconsolePort;
+extern  cvar_t  *sv_webconsolePassword;
+extern  int     sv_webconsoleSocket;
+extern  qboolean sv_webconsoleConnected;
 
 #ifdef USE_VOIP
 extern	cvar_t	*sv_voip;
@@ -311,8 +316,11 @@ qboolean sv_mysql_fetchrow( void );
 void sv_mysql_fetchfieldbyID( int id, char *buffer, int len );
 void sv_mysql_fetchfieldbyName( const char *name, char *buffer, int len );
 
-
-
+//sv_webconsole.c
+qboolean sv_webconsole_connect( int *sockfd );
+void sv_webconsole_send( int *sockfd, char *message, qboolean *connected );
+void sv_webconsole_close( int *sockfd );
+char* sv_webconsole_read( int *sockfd, qboolean *connected );
 
 //
 // sv_init.c
