@@ -5,9 +5,16 @@
 #include <netdb.h>
 #include <fcntl.h>
 #include <string.h>
+#include <unistd.h>
 
 int sv_webconsoleSocket;
+qboolean sv_webconsoleConnected;
 cvar_t *sv_webconsolePassword;
+
+/* Closes webconsole socket */
+void sv_webconsole_close( int *sockfd ) {
+  close(*sockfd);
+}
 
 /* Connects the websocket */
 qboolean sv_webconsole_connect( int *sockfd ) {
@@ -62,23 +69,22 @@ Com_Printf("Attempting Send: %s", message);
   //attempt to connect socket if disconnected
   if(*connected == qfalse) {
     //first try to close it, then connect it
+Com_Printf("Trying to connect.");
     close(*sockfd);
     *connected = sv_webconsole_connect(sockfd);
   }
 
+Com_Printf("Trying to send again");
   //if now connected
   if(*connected == qtrue) {
+Com_Printf("Connected");
     //make sure message sends successfully
     if(send(*sockfd, message, strlen(message), MSG_NOSIGNAL) == -1) {
+Com_Printf("failed to send");
       *connected = qfalse;
       close(*sockfd);
     }
   }
-}
-
-/* Closes webconsole socket */
-void sv_webconsole_close( int *sockfd ) {
-  close(*sockfd);
 }
 
 /* Attempts to read a message from the webconsole
@@ -98,11 +104,10 @@ char* sv_webconsole_read( int *sockfd, qboolean *connected) {
     int bufsize=1024;
     char *receive = malloc(bufsize);
 
-    if(recv(sockfd,receive,bufsize,MSG_NOSIGNAL) == -1) {
+    if(recv(*sockfd,receive,bufsize,MSG_NOSIGNAL) == -1) {
 //      Com_Printf("Error receiving data\n");
       return NULL;
     } else {
-Com_Printf("1");
       Com_Printf("Received: %s\n", receive);
       return receive;
     }
