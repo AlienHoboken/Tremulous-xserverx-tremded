@@ -65,22 +65,17 @@ qboolean sv_webconsole_connect( int *sockfd ) {
  * Attempts to create a socket if necessary.
  */
 void sv_webconsole_send( int *sockfd, char *message, qboolean *connected ) {
-Com_Printf("Attempting Send: %s", message);
   //attempt to connect socket if disconnected
   if(*connected == qfalse) {
     //first try to close it, then connect it
-Com_Printf("Trying to connect.");
     close(*sockfd);
     *connected = sv_webconsole_connect(sockfd);
   }
 
-Com_Printf("Trying to send again");
   //if now connected
   if(*connected == qtrue) {
-Com_Printf("Connected");
     //make sure message sends successfully
     if(send(*sockfd, message, strlen(message), MSG_NOSIGNAL) == -1) {
-Com_Printf("failed to send");
       *connected = qfalse;
       close(*sockfd);
     }
@@ -102,13 +97,17 @@ char* sv_webconsole_read( int *sockfd, qboolean *connected) {
   if(*connected == qtrue) {
     //we can receive 1kb packets
     int bufsize=1024;
-    char *receive = malloc(bufsize);
+    char *receive = malloc(bufsize+1);
+    int response;
 
-    if(recv(*sockfd,receive,bufsize,MSG_NOSIGNAL) == -1) {
-//      Com_Printf("Error receiving data\n");
+    response = recv(*sockfd,receive,bufsize,MSG_NOSIGNAL);
+    if(response == -1) { //no response ready on non-blocking socket (hopefully)
       return NULL;
+    } else if(response == 0) { //socket closed remotely
+      close(*sockfd);
+      *connected = qfalse;
     } else {
-      Com_Printf("Received: %s\n", receive);
+      Com_Printf("Received(%d): %s\n", (*connected == qtrue) ? 1 : 0, receive);
       return receive;
     }
   }
