@@ -10,6 +10,9 @@
 int sv_webconsoleSocket;
 qboolean sv_webconsoleConnected;
 cvar_t *sv_webconsolePassword;
+cvar_t  *sv_webconsoleHost;
+cvar_t  *sv_webconsolePort;
+cvar_t  *sv_webconsoleServer;
 
 /* Closes webconsole socket */
 void sv_webconsole_close( int *sockfd ) {
@@ -18,13 +21,21 @@ void sv_webconsole_close( int *sockfd ) {
 
 /* Connects the websocket */
 qboolean sv_webconsole_connect( int *sockfd ) {
-  int                 port = 5624;
-  char                *host = "50.21.181.81";
+  int                 port;
+  char                *host;
+  char                message[32];
   struct sockaddr_in  server;
   struct hostent      *he;
 
-  //get password
+
+  //get webconsole vars
   sv_webconsolePassword = Cvar_Get("sv_webconsolePassword", "", CVAR_ARCHIVE  );
+  sv_webconsoleHost = Cvar_Get("sv_webconsoleHost", "127.0.0.1", CVAR_ARCHIVE );
+  sv_webconsolePort = Cvar_Get("sv_webconsolePort", "5624", CVAR_ARCHIVE );
+  sv_webconsoleServer = Cvar_Get("sv_webconsoleServer", "", CVAR_ARCHIVE );
+
+  host = sv_webconsoleHost->string;
+  port = sv_webconsolePort->integer;
 
   //create socket
   *sockfd = socket(AF_INET,SOCK_STREAM,0);
@@ -51,7 +62,7 @@ qboolean sv_webconsole_connect( int *sockfd ) {
   fcntl(*sockfd, F_SETFL, O_NONBLOCK);
 
   //send initial message
-  char *message = "server:x:a@og72gH8!*Fhga#\n";
+  Com_sprintf( message, sizeof(message), "server:%s:%s\n", sv_webconsoleServer->string, sv_webconsolePassword->string );
 
   if(send(*sockfd,message,strlen(message),MSG_NOSIGNAL) == -1) {
     close(*sockfd);

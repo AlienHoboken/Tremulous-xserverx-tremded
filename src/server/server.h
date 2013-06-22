@@ -281,6 +281,7 @@ extern  cvar_t  *sv_mysqlpassword;
 extern  cvar_t  *sv_webconsoleHost;
 extern  cvar_t  *sv_webconsolePort;
 extern  cvar_t  *sv_webconsolePassword;
+extern  cvar_t  *sv_webconsoleServer;
 extern  int     sv_webconsoleSocket;
 extern  qboolean sv_webconsoleConnected;
 
