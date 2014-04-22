@@ -1,9 +1,9 @@
 #include "server.h"
 #include <mysql/mysql.h>
 
-MYSQL *connection;
-MYSQL_RES *results;
-MYSQL_ROW row;
+MYSQL *connection = NULL;
+MYSQL_RES *results = NULL;
+MYSQL_ROW row = NULL;
 
 cvar_t *sv_mysql;
 cvar_t *sv_mysqlhost;
@@ -59,8 +59,9 @@ qboolean sv_mysql_runquery( char *query ) {
 }
 
 void sv_mysql_finishquery( void ) {
-  if( sv_mysql->integer == 1 ) {
+  if( sv_mysql->integer == 1 && results) {
     mysql_free_result( results );
+    results = NULL;
   }
 }
 
