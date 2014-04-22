@@ -49,7 +49,17 @@ void sv_mysql_reconnect( void ){
 qboolean sv_mysql_runquery( char *query ) {
   if( sv_mysql->integer == 1 ) {
     if( mysql_query( connection, query ) ) {
-      Com_Printf( "^3WARNING:^7 MySQL Query failed: %s\n", mysql_error( connection ) );
+      Com_Printf( "^3WARNING:^7 MySQL Query failed: %s. Attempting to reconnect.\n", mysql_error( connection ) );
+      //attempt to reconnect mysql if it failed
+      sv_mysql_reconnect();
+      if( sv_mysql->integer == 1 ) {
+        if( mysql_query( connection, query ) ) {
+          Com_Printf( "^3WARNING:^7 MySQL Query failed: %s\n", mysql_error( connection ) );
+          return qfalse;
+        }
+        results = mysql_store_result( connection );
+        return qtrue;
+      }
       return qfalse;
     }
     results = mysql_store_result( connection );
